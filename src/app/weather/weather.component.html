@@ -1,0 +1,180 @@
+<section class="weather" [attr.data-theme]="theme()">
+  <div class="search" (keydown.escape)="closeSearch()">
+    <div class="search-box">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input
+        type="search"
+        class="search-input"
+        placeholder="Buscar cidade..."
+        aria-label="Buscar cidade"
+        autocomplete="off"
+        role="combobox"
+        aria-controls="search-results"
+        [attr.aria-expanded]="searchOpen() && query().length >= 2"
+        [value]="query()"
+        (input)="onQuery($any($event.target).value)"
+        (focus)="searchOpen.set(true)"
+        (keydown.enter)="results()[0] && selectPlace(results()[0])"
+      />
+      <button type="button" class="icon-btn" (click)="useMyLocation()" aria-label="Usar minha localização" title="Usar minha localização">
+        📍
+      </button>
+      <button
+        type="button"
+        class="unit-toggle"
+        (click)="toggleUnit()"
+        [attr.aria-pressed]="unit() === 'F'"
+        [attr.aria-label]="'Unidade de temperatura: graus ' + (unit() === 'C' ? 'Celsius' : 'Fahrenheit') + '. Clique para alternar.'"
+      >
+        °{{ unit() }}
+      </button>
+    </div>
+
+    @if (searchOpen() && query().trim().length >= 2) {
+      <ul class="results" id="search-results" role="listbox">
+        @if (isSearching()) {
+          <li class="results-msg">Buscando...</li>
+        } @else if (searchError()) {
+          <li class="results-msg error">{{ searchError() }}</li>
+        } @else if (results().length === 0) {
+          <li class="results-msg">Nenhuma cidade encontrada para "{{ query() }}".</li>
+        } @else {
+          @for (p of results(); track p.id) {
+            <li role="option">
+              <button type="button" (click)="selectPlace(p)">
+                <strong>{{ p.name }}</strong>
+                <span>{{ placeLabel(p) }}</span>
+              </button>
+            </li>
+          }
+        }
+      </ul>
+    }
+  </div>
+
+  @if (recent().length > 1) {
+    <nav class="chips" aria-label="Locais recentes">
+      @for (p of recent(); track p.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.active]="p.id === report()?.place?.id"
+          (click)="selectPlace(p)"
+        >
+          {{ p.name }}
+        </button>
+      }
+    </nav>
+  }
+
+  @if (notice(); as n) {
+    <p class="banner" role="status">ℹ️ {{ n }}</p>
+  }
+
+  @if (!report() && isLoading()) {
+    <div class="skeleton" aria-busy="true" aria-label="Carregando clima">
+      <div class="sk sk-hero"></div>
+      <div class="sk sk-row"></div>
+      <div class="sk sk-list"></div>
+    </div>
+  } @else if (!report() && error()) {
+    <div class="state" role="alert">
+      <div class="state-icon" aria-hidden="true">⚠️</div>
+      <h2>Algo deu errado</h2>
+      <p>{{ error() }}</p>
+      <button type="button" class="primary" (click)="retry()">Tentar novamente</button>
+    </div>
+  } @else if (current(); as c) {
+    @let r = report()!;
+    <article class="hero" [class.refreshing]="isLoading()">
+      <header>
+        <h2>{{ placeLabel(r.place) }}</h2>
+        <p class="updated">
+          @if (isLoading()) {
+            Atualizando...
+          } @else if (isStale()) {
+            Previsão salva · {{ r.fetchedAt | date: 'd MMM, HH:mm' }}
+          } @else {
+            Atualizado às {{ r.fetchedAt | date: 'HH:mm' }}
+          }
+        </p>
+      </header>
+      <div class="hero-main">
+        <span class="hero-icon" aria-hidden="true">{{ c.info.icon }}</span>
+        <div>
+          <p class="hero-temp">{{ temp(c.temperature) | number: '1.0-0' }}<sup>°{{ unit() }}</sup></p>
+          <p class="hero-desc">{{ c.info.label }}</p>
+        </div>
+      </div>
+      <p class="hero-range">
+        Máx: {{ temp(r.daily[0].tempMax) | number: '1.0-0' }}° · Mín: {{ temp(r.daily[0].tempMin) | number: '1.0-0' }}°
+      </p>
+    </article>
+
+    <dl class="stats">
+      <div class="stat">
+        <dt>Sensação</dt>
+        <dd>{{ temp(c.feelsLike) | number: '1.0-0' }}°</dd>
+      </div>
+      <div class="stat">
+        <dt>Umidade</dt>
+        <dd>{{ c.humidity }}%</dd>
+      </div>
+      <div class="stat">
+        <dt>Vento</dt>
+        <dd>{{ c.windSpeed | number: '1.0-0' }} km/h</dd>
+      </div>
+      <div class="stat">
+        <dt>Pressão</dt>
+        <dd>{{ c.pressure | number: '1.0-0' }} hPa</dd>
+      </div>
+      <div class="stat">
+        <dt>Índice UV</dt>
+        <dd>{{ r.daily[0].uvIndexMax | number: '1.0-0' }}</dd>
+      </div>
+      <div class="stat">
+        <dt>Sol</dt>
+        <dd class="sun">↑ {{ r.daily[0].sunrise | date: 'HH:mm' }} ↓ {{ r.daily[0].sunset | date: 'HH:mm' }}</dd>
+      </div>
+    </dl>
+
+    <section class="card" aria-labelledby="hourly-title">
+      <h3 id="hourly-title">Próximas 24 horas</h3>
+      <ol class="hourly">
+        @for (h of hourly(); track h.time; let i = $index) {
+          <li>
+            <span class="h-time">{{ i === 0 ? 'Agora' : (h.time | date: 'HH:mm') }}</span>
+            <span class="h-icon" aria-hidden="true" [attr.title]="h.info.label">{{ h.info.icon }}</span>
+            <span class="h-temp">{{ temp(h.temperature) | number: '1.0-0' }}°</span>
+            <span class="h-rain" [class.dim]="h.precipProbability < 10">💧{{ h.precipProbability }}%</span>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="card" aria-labelledby="daily-title">
+      <h3 id="daily-title">Previsão de 7 dias</h3>
+      <ul class="daily">
+        @for (d of daily(); track d.date; let i = $index) {
+          <li>
+            <span class="d-day">{{ i === 0 ? 'Hoje' : (d.date | date: 'EEE') }}</span>
+            <span class="d-icon" aria-hidden="true" [attr.title]="d.info.label">{{ d.info.icon }}</span>
+            <span class="d-rain" [class.dim]="d.precipProbability < 10">{{ d.precipProbability }}%</span>
+            <span class="d-min">{{ temp(d.tempMin) | number: '1.0-0' }}°</span>
+            <span class="d-bar" aria-hidden="true">
+              <span [style.left.%]="d.barLeft" [style.width.%]="d.barWidth"></span>
+            </span>
+            <span class="d-max">{{ temp(d.tempMax) | number: '1.0-0' }}°</span>
+          </li>
+        }
+      </ul>
+    </section>
+  } @else {
+    <div class="state">
+      <div class="state-icon" aria-hidden="true">🌍</div>
+      <h2>Escolha um local</h2>
+      <p>Busque uma cidade ou permita o acesso à localização para ver a previsão.</p>
+      <button type="button" class="primary" (click)="useMyLocation()">Usar minha localização</button>
+    </div>
+  }
+</section>
