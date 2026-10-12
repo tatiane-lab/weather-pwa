@@ -1,0 +1,56 @@
+.offline {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1c1203;
+  background: #fbbf24;
+}
+
+.shell {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  h1 { margin: 0; font-size: 1.375rem; letter-spacing: -0.02em; }
+  .logo { font-size: 1.5rem; }
+}
+
+.install {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover { background: var(--hover); }
+}
+
+footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+
+  a { color: inherit; }
+}
