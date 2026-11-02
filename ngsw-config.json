@@ -14,28 +14,28 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/assets/**", "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
+        "files": ["/icons/**", "/assets/**", "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
       }
     }
   ],
   "dataGroups": [
     {
-      "name": "weather-api",
-      "urls": ["/api/weather/**"],
+      "name": "weather-forecast",
+      "urls": ["https://api.open-meteo.com/**"],
       "cacheConfig": {
         "maxSize": 20,
-        "maxAge": "1h",
-        "timeout": "10s",
+        "maxAge": "3h",
+        "timeout": "6s",
         "strategy": "freshness"
       }
     },
     {
-      "name": "forecast-api",
-      "urls": ["/api/weather/forecast/**"],
+      "name": "geocoding",
+      "urls": ["https://geocoding-api.open-meteo.com/**", "https://nominatim.openstreetmap.org/**"],
       "cacheConfig": {
-        "maxSize": 5,
-        "maxAge": "3h",
-        "timeout": "5s",
+        "maxSize": 50,
+        "maxAge": "7d",
+        "timeout": "4s",
         "strategy": "performance"
       }
     }
