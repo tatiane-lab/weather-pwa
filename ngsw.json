@@ -1,0 +1,101 @@
+{
+  "configVersion": 1,
+  "timestamp": 1795527040522,
+  "index": "/weather-pwa/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/weather-pwa/favicon.ico",
+        "/weather-pwa/index.html",
+        "/weather-pwa/main-VLGJKU7U.js",
+        "/weather-pwa/manifest.webmanifest",
+        "/weather-pwa/styles-MNLFBUR2.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/weather-pwa/icons/icon-192x192.png",
+        "/weather-pwa/icons/icon-512x512.png",
+        "/weather-pwa/icons/icon-72x72.png",
+        "/weather-pwa/icons/icon-maskable-512x512.png",
+        "/weather-pwa/icons/icon.svg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "weather-forecast",
+      "patterns": [
+        "https:\\/\\/api\\.open-meteo\\.com\\/.*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 20,
+      "maxAge": 10800000,
+      "timeoutMs": 6000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    },
+    {
+      "name": "geocoding",
+      "patterns": [
+        "https:\\/\\/geocoding-api\\.open-meteo\\.com\\/.*",
+        "https:\\/\\/nominatim\\.openstreetmap\\.org\\/.*"
+      ],
+      "strategy": "performance",
+      "maxSize": 50,
+      "maxAge": 604800000,
+      "timeoutMs": 4000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/weather-pwa/favicon.ico": "9c39f434fe1261f68c5e3eefdf734630d99c5670",
+    "/weather-pwa/icons/icon-192x192.png": "1e374b8dfc1213caf45cb4f673e8b748fd8e1e5b",
+    "/weather-pwa/icons/icon-512x512.png": "0b0db17073a17d2e0e0c0222c58da2c25e7055b7",
+    "/weather-pwa/icons/icon-72x72.png": "52fc6ff3395a87562ad48577e8710ee517d3735d",
+    "/weather-pwa/icons/icon-maskable-512x512.png": "8629db35050e48864fb74e72f6c847bc55fa3471",
+    "/weather-pwa/icons/icon.svg": "1c7284d5544724ee19625003f1d9cfa4d3307c52",
+    "/weather-pwa/index.html": "ced280f2638cb8dd667f8fafe02aaa7412a6fc7f",
+    "/weather-pwa/main-VLGJKU7U.js": "3988398352be665e3ab490eb7a5cc586456904aa",
+    "/weather-pwa/manifest.webmanifest": "781b7d686ab11f8968854ea95853c76525d19ce5",
+    "/weather-pwa/styles-MNLFBUR2.css": "e5347dbaec7fbe2148ba98fb0db3300fbaa52f23"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
